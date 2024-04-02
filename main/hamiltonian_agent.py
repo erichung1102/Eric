@@ -8,6 +8,8 @@ ROUND_DELAY = 5
 
 BOARD_SIZE = 12
 
+assert BOARD_SIZE % 2 == 0 # only works if its even
+
 def generate_hamiltonian_cycle(board_size):
     path = [(0, c) for c in range(board_size)]
 

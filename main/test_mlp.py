@@ -10,9 +10,9 @@ MODEL_PATH = r"trained_models_mlp/6x6_new/ppo_snake_final"
 NUM_EPISODES = 5000
 
 RENDER = True
-IS_SILENT = True
+IS_SILENT = False
 FRAME_DELAY = 0.05 # 0.01 fast, 0.05 slow
-ROUND_DELAY = 2.5
+ROUND_DELAY = 1
 PRINT = True
 
 BOARD_SIZE = 6
@@ -98,4 +98,6 @@ for episode in range(NUM_EPISODES):
 
 env.close()
 print(f"=================== Summary ==================")
+print("Model Path:", MODEL_PATH)
+print("Trials:", NUM_EPISODES)
 print(f"Average Score: {total_score / NUM_EPISODES}, Min Score: {min_score}, Max Score: {max_score}, Average reward: {total_reward / NUM_EPISODES}, Win Ratio: {wins / NUM_EPISODES}, Average moves to win: {'no wins' if wins == 0 else total_win_steps/wins}")

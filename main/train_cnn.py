@@ -12,7 +12,7 @@ from sb3_contrib.common.wrappers import ActionMasker
 
 from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
-BOARD_SIZE = 6 # only factors of 84 work
+BOARD_SIZE = 6 # only factors of 84 more than 4 work
 
 NUM_ENV = 32 * 2 if torch.backends.mps.is_available() else 32
 LOG_DIR = "logs"

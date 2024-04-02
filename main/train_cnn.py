@@ -10,7 +10,9 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 
-from snake_game_custom_wrapper_cnn import SnakeEnv
+from snake_game_custom_wrapper_cnn import SnakeEnvCNN
+
+BOARD_SIZE = 6 # only factors of 84 work
 
 if torch.backends.mps.is_available():
     NUM_ENV = 32 * 2
@@ -33,16 +35,15 @@ def linear_schedule(initial_value, final_value=0.0):
 
     return scheduler
 
-def make_env(seed=0):
+def make_env(board_size, seed=0):
     def _init():
-        env = SnakeEnv(seed=seed)
-        env = ActionMasker(env, SnakeEnv.get_action_mask)
+        env = SnakeEnvCNN(seed=seed, board_size=board_size, enlarge_multiplier=84/BOARD_SIZE)
+        env = ActionMasker(env, SnakeEnvCNN.get_action_mask)
         env = Monitor(env)
-        env.seed(seed)
         return env
     return _init
 
-def main():
+def main(board_size):
 
     # Generate a list of random seeds for each environment.
     seed_set = set()
@@ -50,48 +51,36 @@ def main():
         seed_set.add(random.randint(0, 1e9))
 
     # Create the Snake environment.
-    env = SubprocVecEnv([make_env(seed=s) for s in seed_set])
+    env = SubprocVecEnv([make_env(board_size, seed=s) for s in seed_set])
 
-    if torch.backends.mps.is_available():
+    mps_available = torch.backends.mps.is_available()
+
+    if mps_available:
         lr_schedule = linear_schedule(5e-4, 2.5e-6)
         clip_range_schedule = linear_schedule(0.150, 0.025)
-        # Instantiate a PPO agent using MPS (Metal Performance Shaders).
-        model = MaskablePPO(
-            "CnnPolicy",
-            env,
-            device="mps",
-            verbose=1,
-            n_steps=2048,
-            batch_size=512*8,
-            n_epochs=4,
-            gamma=0.94,
-            learning_rate=lr_schedule,
-            clip_range=clip_range_schedule,
-            tensorboard_log=LOG_DIR
-        )
+        
     else:
         lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
         clip_range_schedule = linear_schedule(0.150, 0.025)
-        # Instantiate a PPO agent using CUDA.
-        model = MaskablePPO(
-            "CnnPolicy",
-            env,
-            device="cuda",
-            verbose=1,
-            n_steps=2048,
-            batch_size=512,
-            n_epochs=4,
-            gamma=0.94,
-            learning_rate=lr_schedule,
-            clip_range=clip_range_schedule,
-            tensorboard_log=LOG_DIR
-        )
+
+    # Instantiate a PPO agent
+    model = MaskablePPO(
+        "CnnPolicy",
+        env,
+        device="mps" if mps_available else "cuda",
+        verbose=1,
+        n_steps=2048,
+        batch_size=512*8,
+        n_epochs=4,
+        gamma=0.94,
+        learning_rate=lr_schedule,
+        clip_range=clip_range_schedule,
+        tensorboard_log=LOG_DIR
+    )    
 
     # Set the save directory
-    if torch.backends.mps.is_available():
-        save_dir = "trained_models_cnn_mps"
-    else:
-        save_dir = "trained_models_cnn"
+    save_dir = "trained_models_cnn_mps" if mps_available else "trained_models_cnn"
+
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint
@@ -116,4 +105,4 @@ def main():
     model.save(os.path.join(save_dir, "ppo_snake_final.zip"))
 
 if __name__ == "__main__":
-    main()
+    main(BOARD_SIZE)

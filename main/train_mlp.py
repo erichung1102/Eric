@@ -8,7 +8,9 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 
-from snake_game_custom_wrapper_mlp import SnakeEnv
+from snake_game_custom_wrapper_mlp import SnakeEnvMLP
+
+BOARD_SIZE = 6
 
 NUM_ENV = 32
 LOG_DIR = "logs"
@@ -27,16 +29,15 @@ def linear_schedule(initial_value, final_value=0.0):
 
     return scheduler
 
-def make_env(seed=0):
+def make_env(board_size, seed=0):
     def _init():
-        env = SnakeEnv(seed=seed)
-        env = ActionMasker(env, SnakeEnv.get_action_mask)
+        env = SnakeEnvMLP(seed=seed, board_size=board_size)
+        env = ActionMasker(env, SnakeEnvMLP.get_action_mask)
         env = Monitor(env)
-        env.seed(seed)
         return env
     return _init
 
-def main():
+def main(board_size):
 
     # Generate a list of random seeds for each environment.
     seed_set = set()
@@ -44,7 +45,7 @@ def main():
         seed_set.add(random.randint(0, 1e9))
 
     # Create the Snake environment.
-    env = SubprocVecEnv([make_env(seed=s) for s in seed_set])
+    env = SubprocVecEnv([make_env(board_size, seed=s) for s in seed_set])
 
     lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
     clip_range_schedule = linear_schedule(0.15, 0.025)
@@ -65,7 +66,7 @@ def main():
     )
 
     # Set the save directory
-    save_dir = "trained_models_mlp"
+    save_dir = "trained_models_mlp/6x6_new"
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint
@@ -90,4 +91,4 @@ def main():
     model.save(os.path.join(save_dir, "ppo_snake_final.zip"))
 
 if __name__ == "__main__":
-    main()
+    main(BOARD_SIZE)

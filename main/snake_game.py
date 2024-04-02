@@ -41,13 +41,16 @@ class SnakeGame:
         self.direction = None
         self.score = 0
         self.food = None
-        self.seed_value = seed
+        self.seed = seed
 
-        random.seed(seed) # Set random seed.
+        np.random.seed(seed) # Set random seed.
         
         self.reset()
 
-    def reset(self):
+    def reset(self, seed=None):
+        if seed:
+            self.seed = seed
+            np.random.seed(seed)
         self.snake = [(self.board_size // 2 + i, self.board_size // 2) for i in range(1, -2, -1)] # Initialize the snake with three cells in (row, column) format.
         self.non_snake = set([(row, col) for row in range(self.board_size) for col in range(self.board_size) if (row, col) not in self.snake]) # Initialize the non-snake cells.
         self.direction = "DOWN" # Snake starts downward in each round
@@ -79,7 +82,7 @@ class SnakeGame:
             self.non_snake.add(self.snake.pop()) # Pop the last cell of the snake and add it to the non-snake set.
 
         # Check if snake collided with itself or the wall
-        done = (
+        lost = (
             (row, col) in self.snake
             or row < 0
             or row >= self.board_size
@@ -87,22 +90,30 @@ class SnakeGame:
             or col >= self.board_size
         )
 
-        if not done:
+        won = food_obtained and len(self.snake) == self.grid_size - 1
+
+        # Cant have both and won and lost
+        assert not (lost and won) 
+
+        if lost:
+            if not self.silent_mode:
+                self.sound_game_over.play()
+        elif won:
+            self.snake.insert(0, (row, col))
+            self.non_snake.remove((row, col))
+            if not self.silent_mode:
+                self.sound_victory.play()
+        else:
             self.snake.insert(0, (row, col))
             self.non_snake.remove((row, col))
 
-        else: # If game is over and the game is not in silent mode, play game over sound effect.
-            if not self.silent_mode:
-                if len(self.snake) < self.grid_size:
-                    self.sound_game_over.play()
-                else:
-                    self.sound_victory.play()
+            # Add new food after snake movement completes.
+            if food_obtained:
+                self.food = self._generate_food()
+                    
 
-        # Add new food after snake movement completes.
-        if food_obtained:
-            self.food = self._generate_food()
 
-        info ={
+        info = {
             "snake_size": len(self.snake),
             "snake_head_pos": np.array(self.snake[0]),
             "prev_snake_head_pos": np.array(self.snake[1]),
@@ -110,7 +121,7 @@ class SnakeGame:
             "food_obtained": food_obtained
         }
 
-        return done, info
+        return lost or won, info
 
     # 0: UP, 1: LEFT, 2: RIGHT, 3: DOWN
     def _update_direction(self, action):

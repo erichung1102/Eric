@@ -207,3 +207,11 @@ class SnakeEnvCNN(gymnasium.Env):
     
     # env.close()
     # print("Average episode reward for random strategy: {}".format(sum_reward/NUM_EPISODES))
+
+from gymnasium.utils.env_checker import check_env
+
+if __name__ == '__main__':
+    env = SnakeEnvCNN()
+    env.reset()
+    check_env(env)
+    print("observation shape:", env._generate_observation().shape)

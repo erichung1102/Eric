@@ -7,9 +7,9 @@ import numpy as np
 from snake_game import SnakeGame
 
 class SnakeEnvMLP(gymnasium.Env):
-    def __init__(self, seed=0, board_size=12, reward_scale=0.1, silent_mode=True, limit_step=True):
+    def __init__(self, seed=0, board_size=12, reward_scale=0.1, is_render=False, is_silent=True, limit_step=True):
         super().__init__()
-        self.game = SnakeGame(seed=seed, board_size=board_size, silent_mode=silent_mode)
+        self.game = SnakeGame(seed=seed, board_size=board_size, is_render=is_render, is_silent=is_silent)
         self.game.reset()
 
         self.seed = seed
@@ -155,7 +155,7 @@ class SnakeEnvMLP(gymnasium.Env):
 # from matplotlib import pyplot as plt
 
 # if __name__ == "__main__":
-#     env = SnakeEnv(silent_mode=False)
+#     env = SnakeEnv(is_render=True, is_silent=False)
     
     # # Test Init Efficiency
     # print(MODEL_PATH_S)

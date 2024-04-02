@@ -5,11 +5,12 @@ from sb3_contrib import MaskablePPO
 
 from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
-MODEL_PATH = r"trained_models_cnn_mps/ppo_snake_5000000_steps"
+MODEL_PATH = r"trained_models_cnn_mps/6x6_new/ppo_snake_23000000_steps"
 
 NUM_EPISODES = 5000
 
-RENDER = False
+RENDER = True
+IS_SILENT = False
 FRAME_DELAY = 0.05 # 0.01 fast, 0.05 slow
 ROUND_DELAY = 2.5
 PRINT = False
@@ -19,7 +20,7 @@ BOARD_SIZE = 6
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")
 
-env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, enlarge_multiplier=84 / BOARD_SIZE, limit_step=True, silent_mode=not RENDER)
+env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, enlarge_multiplier=84 / BOARD_SIZE, limit_step=True, is_render=RENDER, is_silent=IS_SILENT)
 
 # Load the trained model
 model = MaskablePPO.load(MODEL_PATH)

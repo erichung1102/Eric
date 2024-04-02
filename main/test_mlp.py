@@ -10,6 +10,7 @@ MODEL_PATH = r"trained_models_mlp/6x6_new/ppo_snake_final"
 NUM_EPISODES = 5000
 
 RENDER = True
+IS_SILENT = True
 FRAME_DELAY = 0.05 # 0.01 fast, 0.05 slow
 ROUND_DELAY = 2.5
 PRINT = True
@@ -20,7 +21,7 @@ seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")
 
 
-env = SnakeEnvMLP(seed=seed, board_size=BOARD_SIZE, limit_step=False, silent_mode=not RENDER)
+env = SnakeEnvMLP(seed=seed, board_size=BOARD_SIZE, limit_step=False, is_render=RENDER, is_silent=IS_SILENT)
 
 # Load the trained model
 model = MaskablePPO.load(MODEL_PATH)

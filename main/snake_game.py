@@ -9,7 +9,7 @@ import pygame
 from pygame import mixer
 
 class SnakeGame:
-    def __init__(self, seed=0, board_size=12, silent_mode=True):
+    def __init__(self, seed=0, board_size=12, is_render=False, is_silent=True):
         self.board_size = board_size
         self.grid_size = self.board_size ** 2
         self.cell_size = 40
@@ -19,18 +19,20 @@ class SnakeGame:
         self.display_width = self.width + 2 * self.border_size
         self.display_height = self.height + 2 * self.border_size + 40
 
-        self.silent_mode = silent_mode
-        if not silent_mode:
+        self.is_render = is_render
+        self.is_silent = is_silent
+        if is_render:
             pygame.init()
             pygame.display.set_caption("Snake Game")
             self.screen = pygame.display.set_mode((self.display_width, self.display_height))
             self.font = pygame.font.Font(None, 36)
 
-            # Load sound effects
-            mixer.init()
-            self.sound_eat = mixer.Sound("sound/eat.wav")
-            self.sound_game_over = mixer.Sound("sound/game_over.wav")
-            self.sound_victory = mixer.Sound("sound/victory.wav")
+            if not is_silent:
+                # Load sound effects
+                mixer.init()
+                self.sound_eat = mixer.Sound("sound/eat.wav")
+                self.sound_game_over = mixer.Sound("sound/game_over.wav")
+                self.sound_victory = mixer.Sound("sound/victory.wav")
         else:
             self.screen = None
             self.font = None
@@ -75,7 +77,7 @@ class SnakeGame:
         if (row, col) == self.food: # If snake eats food, it won't pop the last cell. The food grid will be taken by snake later, no need to update board vacancy matrix.
             food_obtained = True
             self.score += 10 # Add 10 points to the score when food is eaten.
-            if not self.silent_mode:
+            if not self.is_silent:
                 self.sound_eat.play()
         else:
             food_obtained = False
@@ -96,12 +98,12 @@ class SnakeGame:
         assert not (lost and won) 
 
         if lost:
-            if not self.silent_mode:
+            if not self.is_silent:
                 self.sound_game_over.play()
         elif won:
             self.snake.insert(0, (row, col))
             self.non_snake.remove((row, col))
-            if not self.silent_mode:
+            if not self.is_silent:
                 self.sound_victory.play()
         else:
             self.snake.insert(0, (row, col))
@@ -110,8 +112,6 @@ class SnakeGame:
             # Add new food after snake movement completes.
             if food_obtained:
                 self.food = self._generate_food()
-                    
-
 
         info = {
             "snake_size": len(self.snake),
@@ -198,6 +198,8 @@ class SnakeGame:
         return text_rect.collidepoint(mouse_pos)
 
     def render(self):
+        if not self.is_render:
+            raise Exception("render called on a SnakeGame where self.is_render == False")
         self.screen.fill((0, 0, 0))
 
         # Draw border
@@ -260,7 +262,7 @@ if __name__ == "__main__":
     import time
 
     seed = random.randint(0, 1e9)
-    game = SnakeGame(seed=seed, silent_mode=False)
+    game = SnakeGame(seed=seed, is_render=True, is_silent=True)
     pygame.init()
     game.screen = pygame.display.set_mode((game.display_width, game.display_height))
     pygame.display.set_caption("Snake Game")
@@ -301,7 +303,8 @@ if __name__ == "__main__":
                     for i in range(3, 0, -1):
                         game.screen.fill((0, 0, 0))
                         game.draw_countdown(i)
-                        game.sound_eat.play()
+                        if not game.is_silent:
+                            game.sound_eat.play()
                         pygame.time.wait(1000)
                     action = -1  # Reset action variable when starting a new game
                     game_state = "running"
@@ -311,7 +314,8 @@ if __name__ == "__main__":
                     for i in range(3, 0, -1):
                         game.screen.fill((0, 0, 0))
                         game.draw_countdown(i)
-                        game.sound_eat.play()
+                        if not game.is_silent:
+                            game.sound_eat.play()
                         pygame.time.wait(1000)
                     game.reset()
                     action = -1  # Reset action variable when starting a new game

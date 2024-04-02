@@ -6,15 +6,15 @@ import numpy as np
 from snake_game import SnakeGame
 
 class SnakeEnvCNN(gymnasium.Env):
-    def __init__(self, seed=0, board_size=12, reward_scale=0.1, enlarge_multiplier=7, silent_mode=True, limit_step=True):
+    def __init__(self, seed=0, board_size=12, reward_scale=0.1, enlarge_multiplier=7, is_render=False, is_silent=True, limit_step=True):
         super().__init__()
-        self.game = SnakeGame(seed=seed, board_size=board_size, silent_mode=silent_mode)
+        self.game = SnakeGame(seed=seed, board_size=board_size, is_render=is_render, is_silent=is_silent)
         self.game.reset()
 
         self.seed = seed
         self.reward_scale = reward_scale
 
-        self.silent_mode = silent_mode
+        self.is_silent = is_silent
 
         self.action_space = gymnasium.spaces.Discrete(4) # 0: UP, 1: LEFT, 2: RIGHT, 3: DOWN
         self.observation_space = gymnasium.spaces.Box(
@@ -57,7 +57,7 @@ class SnakeEnvCNN(gymnasium.Env):
         if info["snake_size"] == self.grid_size: # Snake fills up the entire board, game over.
             reward = self.max_growth * self.reward_scale # Victory reward
             self.terminated = True
-            if not self.silent_mode:
+            if not self.is_silent:
                 self.game.sound_victory.play()
             return obs, reward, self.terminated, False, info
         
@@ -166,7 +166,7 @@ class SnakeEnvCNN(gymnasium.Env):
 # from matplotlib import pyplot as plt
 
 # if __name__ == "__main__":
-#     env = SnakeEnv(silent_mode=False)
+#     env = SnakeEnv(is_render=True, is_silent=False)
     
     # # Test Init Efficiency
     # print(MODEL_PATH_S)

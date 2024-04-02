@@ -10,6 +10,8 @@ from pygame import mixer
 
 class SnakeGame:
     def __init__(self, seed=0, board_size=12, is_render=False, is_silent=True):
+        if not is_render and not is_silent:
+            raise ValueError("Not rendering but playing sound, bad input. Remove this check if you really want it and know what you're doing.")
         self.board_size = board_size
         self.grid_size = self.board_size ** 2
         self.cell_size = 40

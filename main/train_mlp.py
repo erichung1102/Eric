@@ -66,7 +66,7 @@ def main(board_size):
     )
 
     # Set the save directory
-    save_dir = "trained_models_mlp/6x6_new"
+    save_dir = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}"
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint

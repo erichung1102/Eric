@@ -76,7 +76,7 @@ def main(board_size):
     )    
 
     # Set the save directory
-    folder_dir = "6x6_new"
+    folder_dir = f"{BOARD_SIZE}x{BOARD_SIZE}"
     save_dir = ("trained_models_cnn_mps" if mps_available else "trained_models_cnn") + "/" + folder_dir
 
     os.makedirs(save_dir, exist_ok=True)

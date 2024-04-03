@@ -82,7 +82,7 @@ def main(board_size):
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint
-    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_snake")
+    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo")
 
     # Writing the training logs from stdout to a file
     original_stdout = sys.stdout
@@ -100,7 +100,7 @@ def main(board_size):
     sys.stdout = original_stdout
 
     # Save the final model
-    model.save(os.path.join(save_dir, "ppo_snake_final.zip"))
+    model.save(os.path.join(save_dir, "ppo_final.zip"))
 
 if __name__ == "__main__":
     main(BOARD_SIZE)

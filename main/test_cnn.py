@@ -15,7 +15,7 @@ PRINT = True
 
 BOARD_SIZE = 6
 
-MODEL_PATH = f"trained_models_cnn_mps/{BOARD_SIZE}x{BOARD_SIZE}/ppo_snake_23000000_steps"
+MODEL_PATH = f"trained_models_cnn_mps/{BOARD_SIZE}x{BOARD_SIZE}/ppo_snake_final"
 
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")

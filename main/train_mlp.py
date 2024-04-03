@@ -10,7 +10,7 @@ from sb3_contrib.common.wrappers import ActionMasker
 
 from snake_game_custom_wrapper_mlp import SnakeEnvMLP
 
-BOARD_SIZE = 6
+BOARD_SIZE = 8
 
 NUM_ENV = 32
 LOG_DIR = "logs"

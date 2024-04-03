@@ -57,8 +57,6 @@ class SnakeEnvCNN(gymnasium.Env):
         if info["snake_size"] == self.grid_size: # Snake fills up the entire board, game over.
             reward = self.max_growth * self.reward_scale # Victory reward
             self.terminated = True
-            if not self.is_silent:
-                self.game.sound_victory.play()
             return obs, reward, self.terminated, False, info
         
         if self.reward_step_counter > self.step_limit: # Step limit reached, game over.

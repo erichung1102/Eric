@@ -3,10 +3,10 @@ import random
 
 from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
-FRAME_DELAY = 0.01 # 0.01 fast, 0.05 slow
-ROUND_DELAY = 5
+FRAME_DELAY = 0.02 # 0.01 fast, 0.05 slow
+ROUND_DELAY = 1.5
 
-BOARD_SIZE = 12
+BOARD_SIZE = 4
 
 assert BOARD_SIZE % 2 == 0 # only works if its even
 
@@ -45,7 +45,7 @@ def main():
     seed = random.randint(0, 1e9)
     print(f"Using seed = {seed} for testing.")
 
-    env = SnakeEnvCNN(is_render=True, is_silent=False, seed=seed, board_size=BOARD_SIZE)
+    env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, is_render=True, is_silent=False)
 
     cycle = generate_hamiltonian_cycle(env.game.board_size)
     cycle_len = len(cycle)

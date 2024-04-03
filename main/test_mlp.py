@@ -5,17 +5,17 @@ from sb3_contrib import MaskablePPO
 
 from snake_game_custom_wrapper_mlp import SnakeEnvMLP
 
-MODEL_PATH = r"trained_models_mlp/6x6_new/ppo_snake_final"
-
 NUM_EPISODES = 5000
 
-RENDER = True
-IS_SILENT = False
+RENDER = False
+IS_SILENT = True
 FRAME_DELAY = 0.05 # 0.01 fast, 0.05 slow
 ROUND_DELAY = 1
-PRINT = True
+PRINT = False
 
-BOARD_SIZE = 6
+BOARD_SIZE = 8
+
+MODEL_PATH = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}/ppo_snake_final"
 
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")

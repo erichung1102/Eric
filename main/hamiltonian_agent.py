@@ -65,7 +65,7 @@ def main():
         next_position = cycle[(current_index + 1) % cycle_len]
         action = find_next_action(snake_head, next_position)
 
-        _, _, done, _ = env.step(action)
+        _, _, done, _, _ = env.step(action)
         num_step += 1
         env.render()
         time.sleep(FRAME_DELAY)
@@ -73,6 +73,8 @@ def main():
         if done:
             print(f"Game Finished: Score = {env.game.score}, Total steps = {num_step}")
             time.sleep(ROUND_DELAY)
+
+    env.close()
 
 if __name__ == "__main__":
     main()

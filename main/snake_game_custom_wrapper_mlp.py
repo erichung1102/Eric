@@ -96,6 +96,9 @@ class SnakeEnvMLP(gymnasium.Env):
     def render(self):
         self.game.render()
 
+    def close(self):
+        self.game.close()
+
     def get_action_mask(self):
         return np.array([[self._check_action_validity(a) for a in range(self.action_space.n)]])
     

@@ -222,8 +222,12 @@ class SnakeGame:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                self.close()
                 sys.exit()
+                
+    def close(self):
+        pygame.quit()
+        mixer.quit()
 
     def draw_snake(self):
         # Draw the head
@@ -264,7 +268,7 @@ if __name__ == "__main__":
     import time
 
     seed = random.randint(0, 1e9)
-    game = SnakeGame(seed=seed, is_render=True, is_silent=True)
+    game = SnakeGame(seed=seed, is_render=True, is_silent=False)
     pygame.init()
     game.screen = pygame.display.set_mode((game.display_width, game.display_height))
     pygame.display.set_caption("Snake Game")
@@ -297,7 +301,7 @@ if __name__ == "__main__":
                         action = 2
 
             if event.type == pygame.QUIT:
-                pygame.quit()
+                game.close()
                 sys.exit()
 
             if game_state == "welcome" and event.type == pygame.MOUSEBUTTONDOWN:

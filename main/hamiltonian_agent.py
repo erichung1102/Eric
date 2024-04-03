@@ -1,7 +1,7 @@
 import time
 import random
 
-from snake_game_custom_wrapper_cnn import SnakeEnv
+from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
 FRAME_DELAY = 0.01 # 0.01 fast, 0.05 slow
 ROUND_DELAY = 5
@@ -45,7 +45,7 @@ def main():
     seed = random.randint(0, 1e9)
     print(f"Using seed = {seed} for testing.")
 
-    env = SnakeEnv(silent_mode=False, seed=seed, board_size=BOARD_SIZE)
+    env = SnakeEnvCNN(is_render=True, is_silent=False, seed=seed, board_size=BOARD_SIZE)
 
     cycle = generate_hamiltonian_cycle(env.game.board_size)
     cycle_len = len(cycle)

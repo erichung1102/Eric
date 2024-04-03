@@ -7,11 +7,11 @@ from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
 NUM_EPISODES = 5000
 
-RENDER = False
-IS_SILENT = True
-FRAME_DELAY = 0.05 # 0.01 fast, 0.05 slow
-ROUND_DELAY = 1
-PRINT = False
+RENDER = True
+IS_SILENT = False
+FRAME_DELAY = 0.02 # 0.02 fast, 0.05 slow
+ROUND_DELAY = 1.5
+PRINT = True
 
 BOARD_SIZE = 6
 

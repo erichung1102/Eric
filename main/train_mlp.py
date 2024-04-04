@@ -80,7 +80,8 @@ def main(board_size):
 
         model.learn(
             total_timesteps=int(100000000),
-            callback=[checkpoint_callback]
+            callback=[checkpoint_callback],
+            tb_log_name=f"ppo_mlp_{BOARD_SIZE}x{BOARD_SIZE}"
         )
         env.close()
 

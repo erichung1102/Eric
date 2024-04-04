@@ -53,22 +53,20 @@ class SnakeEnvMLP(gymnasium.Env):
         self.reward_step_counter += 1
 
         if info["snake_size"] == self.grid_size: # Snake fills up the entire board, game over.
-            reward = self.max_growth * self.reward_scale # Victory reward
+            reward = self.max_growth # Victory reward
             self.terminated = True
-            return obs, reward, self.terminated, False, info
 
-        if self.reward_step_counter > self.step_limit: # Step limit reached, game over.
+        elif self.reward_step_counter > self.step_limit: # Step limit reached, game over.
             self.reward_step_counter = 0
             self.terminated = True
         
-        if self.terminated: # Snake bumps into wall or itself, game over.
+        elif self.terminated: # Snake bumps into wall or itself, game over.
             # Game Over penalty is based on snake size.
             # reward = - math.pow(self.max_growth, (self.grid_size - info["snake_size"]) / self.max_growth) # (-max_growth, -1)
             # return obs, reward * 0.1, self.terminated, False, info
 
             # Linear penalty decay.
             reward = info["snake_size"] - self.grid_size # (-max_growth, 0)
-            return obs, reward * 0.1, self.terminated, False, info
         
         elif info["food_obtained"]: # food eaten
             # Reward on num_steps between getting food.
@@ -90,8 +88,7 @@ class SnakeEnvMLP(gymnasium.Env):
         # max_score: 288
         # min_score: -141
 
-        reward = reward * self.reward_scale # Scale reward
-        return obs, reward, self.terminated, False, info
+        return obs, reward * self.reward_scale, self.terminated, False, info
     
     def render(self):
         self.game.render()

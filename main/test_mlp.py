@@ -15,7 +15,7 @@ PRINT = True
 
 BOARD_SIZE = 8
 
-MODEL_PATH = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}/ppo_snake_final"
+MODEL_PATH = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}/ppo_final"
 
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")

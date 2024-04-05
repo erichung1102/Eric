@@ -64,7 +64,9 @@ class SnakeEnvCNN(gymnasium.Env):
         
         elif self.terminated: # Snake bumps into wall or itself, game over.
             # Game Over penalty is based on snake size.
-            reward = - math.pow(self.max_growth, (self.grid_size - info["snake_size"]) / self.max_growth) # (-max_growth, -1)   
+            # reward = - math.pow(self.max_growth, (self.grid_size - info["snake_size"]) / self.max_growth) # (-max_growth, -1)  
+            # Game Over penalty is based on board size. 
+            reward = -self.max_growth
           
         elif info["food_obtained"]: # Food eaten. Reward boost on snake size.
             reward = info["snake_size"] / self.grid_size

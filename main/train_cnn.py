@@ -14,10 +14,8 @@ from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
 BOARD_SIZE = 6 # only factors of 84 more than 4 work
 
-NUM_ENV = 32 * 2 if torch.backends.mps.is_available() else 32
+NUM_ENV = 32
 LOG_DIR = "logs"
-
-os.makedirs(LOG_DIR, exist_ok=True)
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
@@ -41,6 +39,7 @@ def make_env(board_size, seed=0):
     return _init
 
 def main(board_size):
+    os.makedirs(LOG_DIR, exist_ok=True)
 
     # Generate a list of random seeds for each environment.
     seed_set = set()

@@ -14,7 +14,6 @@ BOARD_SIZE = 8
 
 NUM_ENV = 32
 LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
@@ -38,6 +37,7 @@ def make_env(board_size, seed=0):
     return _init
 
 def main(board_size):
+    os.makedirs(LOG_DIR, exist_ok=True)
 
     # Generate a list of random seeds for each environment.
     seed_set = set()

@@ -31,7 +31,6 @@ class SnakeGame:
 
             if not is_silent:
                 # Load sound effects
-                mixer.init()
                 self.sound_eat = mixer.Sound("sound/eat.wav")
                 self.sound_game_over = mixer.Sound("sound/game_over.wav")
                 self.sound_victory = mixer.Sound("sound/victory.wav")
@@ -227,7 +226,6 @@ class SnakeGame:
                 
     def close(self):
         pygame.quit()
-        mixer.quit()
 
     def draw_snake(self):
         # Draw the head

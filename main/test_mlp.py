@@ -33,6 +33,8 @@ max_score = 0
 wins = 0
 total_win_steps = 0
 
+start_time = time.time()
+
 for episode in range(NUM_EPISODES):
     print(f"{episode}/{NUM_EPISODES}", end="\r")
     obs, info = env.reset()
@@ -101,3 +103,4 @@ print(f"=================== Summary ==================")
 print("Model Path:", MODEL_PATH)
 print("Trials:", NUM_EPISODES)
 print(f"Average Score: {total_score / NUM_EPISODES}, Min Score: {min_score}, Max Score: {max_score}, Average reward: {total_reward / NUM_EPISODES}, Win Ratio: {wins / NUM_EPISODES}, Average moves to win: {'no wins' if wins == 0 else total_win_steps/wins}")
+print("Running Time (s):", time.time() - start_time)

@@ -10,10 +10,13 @@ from sb3_contrib.common.wrappers import ActionMasker
 
 from snake_game_custom_wrapper_mlp import SnakeEnvMLP
 
-BOARD_SIZE = 8
+BOARD_SIZE = 4
 
 NUM_ENV = 32
 LOG_DIR = "logs"
+
+# Set the save directory
+SAVE_DIR = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}_test"
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
@@ -36,12 +39,12 @@ def make_env(board_size, seed=0):
         return env
     return _init
 
-def main(board_size):
-    os.makedirs(LOG_DIR, exist_ok=True)
+def main(board_size, log_dir, save_dir, num_env):
+    os.makedirs(log_dir, exist_ok=True)
 
     # Generate a list of random seeds for each environment.
     seed_set = set()
-    while len(seed_set) < NUM_ENV:
+    while len(seed_set) < num_env:
         seed_set.add(random.randint(0, 1e9))
 
     # Create the Snake environment.
@@ -62,11 +65,9 @@ def main(board_size):
         gamma=0.94,
         learning_rate=lr_schedule,
         clip_range=clip_range_schedule,
-        tensorboard_log=LOG_DIR
+        tensorboard_log=log_dir
     )
-
-    # Set the save directory
-    save_dir = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}"
+    
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint
@@ -81,7 +82,7 @@ def main(board_size):
         model.learn(
             total_timesteps=int(100000000),
             callback=[checkpoint_callback],
-            tb_log_name=f"ppo_mlp_{BOARD_SIZE}x{BOARD_SIZE}"
+            tb_log_name=f"ppo_mlp_{board_size}x{board_size}"
         )
         env.close()
 
@@ -92,4 +93,4 @@ def main(board_size):
     model.save(os.path.join(save_dir, "ppo_final.zip"))
 
 if __name__ == "__main__":
-    main(BOARD_SIZE)
+    main(BOARD_SIZE, SAVE_DIR)

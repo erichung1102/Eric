@@ -12,14 +12,20 @@ from sb3_contrib.common.wrappers import ActionMasker
 
 from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
-BOARD_SIZE = 6 # only factors of 84 more than 4 work
+BOARD_SIZE = 12 # only factors of 84 work
 
 NUM_ENV = 32
 LOG_DIR = "logs"
 
+MPS_AVALIABLE = torch.backends.mps.is_available()
+
+# Set the save directory
+SAVE_DIR = (("trained_models_cnn_mps" if MPS_AVALIABLE else "trained_models_cnn") 
+            + "/" 
+            + f"{BOARD_SIZE}x{BOARD_SIZE}_harsher_punishment")
+
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
-
     if isinstance(initial_value, str):
         initial_value = float(initial_value)
         final_value = float(final_value)
@@ -38,18 +44,16 @@ def make_env(board_size, seed=0):
         return env
     return _init
 
-def main(board_size):
-    os.makedirs(LOG_DIR, exist_ok=True)
+def main(board_size, mps_available, log_dir, save_dir, num_env):
+    os.makedirs(log_dir, exist_ok=True)
 
     # Generate a list of random seeds for each environment.
     seed_set = set()
-    while len(seed_set) < NUM_ENV:
+    while len(seed_set) < num_env:
         seed_set.add(random.randint(0, 1e9))
 
     # Create the Snake environment.
     env = SubprocVecEnv([make_env(board_size, seed=s) for s in seed_set])
-
-    mps_available = torch.backends.mps.is_available()
 
     if mps_available:
         lr_schedule = linear_schedule(5e-4, 2.5e-6)
@@ -71,12 +75,8 @@ def main(board_size):
         gamma=0.94,
         learning_rate=lr_schedule,
         clip_range=clip_range_schedule,
-        tensorboard_log=LOG_DIR
+        tensorboard_log=log_dir
     )    
-
-    # Set the save directory
-    folder_dir = f"{BOARD_SIZE}x{BOARD_SIZE}"
-    save_dir = ("trained_models_cnn_mps" if mps_available else "trained_models_cnn") + "/" + folder_dir
 
     os.makedirs(save_dir, exist_ok=True)
 
@@ -92,7 +92,7 @@ def main(board_size):
         model.learn(
             total_timesteps=int(100000000),
             callback=[checkpoint_callback],
-            tb_log_name=f"ppo_cnn_{BOARD_SIZE}x{BOARD_SIZE}"
+            tb_log_name=f"ppo_cnn_{board_size}x{board_size}"
         )
         env.close()
 
@@ -103,4 +103,4 @@ def main(board_size):
     model.save(os.path.join(save_dir, "ppo_final.zip"))
 
 if __name__ == "__main__":
-    main(BOARD_SIZE)
+    main(BOARD_SIZE, MPS_AVALIABLE, LOG_DIR, SAVE_DIR, NUM_ENV)

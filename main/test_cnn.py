@@ -49,9 +49,7 @@ for episode in range(NUM_EPISODES):
         print(f"=================== Episode {episode + 1} ==================")
 
     while not terminated:
-        action, _ = model.predict(obs, action_masks=env.get_action_mask())
-        prev_mask = env.get_action_mask()
-        prev_direction = env.game.direction
+        action, _ = model.predict(obs, action_masks=env.get_action_mask(), deterministic=True)
         num_steps += 1
         obs, reward, terminated, truncated, info = env.step(action)
 

@@ -150,28 +150,28 @@ class SnakeGame:
             food = (0, 0)
         return food
     
-    def draw_score(self):
+    def draw_score(self, x_offset=0):
         score_text = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
-        self.screen.blit(score_text, (self.border_size, self.height + 2 * self.border_size))
+        self.screen.blit(score_text, (self.border_size + x_offset, self.height + 2 * self.border_size))
     
-    def draw_welcome_screen(self):
+    def draw_welcome_screen(self, x_offset=0):
         title_text = self.font.render("SNAKE GAME", True, (255, 255, 255))
         start_button_text = "START"
 
         self.screen.fill((0, 0, 0))
-        self.screen.blit(title_text, (self.display_width // 2 - title_text.get_width() // 2, self.display_height // 4))
-        self.draw_button_text(start_button_text, (self.display_width // 2, self.display_height // 2))
+        self.screen.blit(title_text, (self.display_width // 2 - title_text.get_width() // 2 + x_offset, self.display_height // 4))
+        self.draw_button_text(start_button_text, (self.display_width // 2 + x_offset, self.display_height // 2))
         pygame.display.flip()
 
-    def draw_game_over_screen(self):
+    def draw_game_over_screen(self, x_offset=0):
         game_over_text = self.font.render("GAME OVER", True, (255, 255, 255))
         final_score_text = self.font.render(f"SCORE: {self.score}", True, (255, 255, 255))
         retry_button_text = "RETRY"
 
         self.screen.fill((0, 0, 0))
-        self.screen.blit(game_over_text, (self.display_width // 2 - game_over_text.get_width() // 2, self.display_height // 4))
-        self.screen.blit(final_score_text, (self.display_width // 2 - final_score_text.get_width() // 2, self.display_height // 4 + final_score_text.get_height() + 10))
-        self.draw_button_text(retry_button_text, (self.display_width // 2, self.display_height // 2))          
+        self.screen.blit(game_over_text, (self.display_width // 2 - game_over_text.get_width() // 2 + x_offset, self.display_height // 4))
+        self.screen.blit(final_score_text, (self.display_width // 2 - final_score_text.get_width() // 2 + x_offset, self.display_height // 4 + final_score_text.get_height() + 10))
+        self.draw_button_text(retry_button_text, (self.display_width // 2 + x_offset, self.display_height // 2))          
         pygame.display.flip()
 
     def draw_button_text(self, button_text_str, pos, hover_color=(255, 255, 255), normal_color=(100, 100, 100)):
@@ -186,40 +186,40 @@ class SnakeGame:
         
         self.screen.blit(colored_text, text_rect)
     
-    def draw_countdown(self, number):
+    def draw_countdown(self, number, x_offset=0):
         countdown_text = self.font.render(str(number), True, (255, 255, 255))
-        self.screen.blit(countdown_text, (self.display_width // 2 - countdown_text.get_width() // 2, self.display_height // 2 - countdown_text.get_height() // 2))
+        self.screen.blit(countdown_text, (self.display_width // 2 - countdown_text.get_width() // 2 + x_offset, self.display_height // 2 - countdown_text.get_height() // 2))
         pygame.display.flip()
 
-    def is_mouse_on_button(self, button_text):
+    def is_mouse_on_button(self, button_text, x_offset=0):
         mouse_pos = pygame.mouse.get_pos()
         text_rect = button_text.get_rect(
             center=(
-                self.display_width // 2,
+                self.display_width // 2 + x_offset, 
                 self.display_height // 2,
             )
         )
         return text_rect.collidepoint(mouse_pos)
 
-    def render(self):
+    def render(self, x_offset=0):
         if not self.is_render:
             raise Exception("render called on a SnakeGame where self.is_render == False")
 
-        pygame.draw.rect(self.screen, (0, 0, 0), (0, 0, self.display_width, self.display_height))
+        pygame.draw.rect(self.screen, (0, 0, 0), (x_offset, 0, self.display_width, self.display_height))
 
         # Draw border
-        pygame.draw.rect(self.screen, (255, 255, 255), (self.border_size - 2, self.border_size - 2, self.width + 4, self.height + 4), 2)
+        pygame.draw.rect(self.screen, (255, 255, 255), (self.border_size - 2 + x_offset, self.border_size - 2, self.width + 4, self.height + 4), 2)
 
         # Draw snake
-        self.draw_snake()
+        self.draw_snake(x_offset=x_offset)
         
         # Draw food
         if len(self.snake) < self.grid_size: # If the snake occupies the entire board, don't draw food.
             r, c = self.food
-            pygame.draw.rect(self.screen, (255, 0, 0), (c * self.cell_size + self.border_size, r * self.cell_size + self.border_size, self.cell_size, self.cell_size))
+            pygame.draw.rect(self.screen, (255, 0, 0), (c * self.cell_size + self.border_size + x_offset, r * self.cell_size + self.border_size, self.cell_size, self.cell_size))
 
         # Draw score
-        self.draw_score()
+        self.draw_score(x_offset=x_offset)
 
         pygame.display.flip()
 
@@ -231,10 +231,10 @@ class SnakeGame:
     def close(self):
         pygame.quit()
 
-    def draw_snake(self):
+    def draw_snake(self, x_offset=0):
         # Draw the head
         head_r, head_c = self.snake[0]
-        head_x = head_c * self.cell_size + self.border_size
+        head_x = head_c * self.cell_size + self.border_size + x_offset
         head_y = head_r * self.cell_size + self.border_size
 
         # Draw the head (Blue)
@@ -254,7 +254,7 @@ class SnakeGame:
         color_list = np.linspace(255, 100, len(self.snake), dtype=np.uint8)
         i = 1
         for r, c in self.snake[1:]:
-            body_x = c * self.cell_size + self.border_size
+            body_x = c * self.cell_size + self.border_size + x_offset
             body_y = r * self.cell_size + self.border_size
             body_width = self.cell_size
             body_height = self.cell_size

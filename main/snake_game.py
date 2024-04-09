@@ -74,16 +74,6 @@ class SnakeGame:
         elif self.direction == "RIGHT":
             col += 1
 
-        # Check if snake eats food.
-        if (row, col) == self.food: # If snake eats food, it won't pop the last cell. The food grid will be taken by snake later, no need to update board vacancy matrix.
-            food_obtained = True
-            self.score += 10 # Add 10 points to the score when food is eaten.
-            if not self.is_silent:
-                self.sound_eat.play()
-        else:
-            food_obtained = False
-            self.non_snake.add(self.snake.pop()) # Pop the last cell of the snake and add it to the non-snake set.
-
         # Check if snake collided with itself or the wall
         lost = (
             (row, col) in self.snake
@@ -93,26 +83,39 @@ class SnakeGame:
             or col >= self.board_size
         )
 
-        won = food_obtained and len(self.snake) == self.grid_size - 1
-
-        # Cant have both and won and lost
-        assert not (lost and won) 
+        food_obtained = False
 
         if lost:
             if not self.is_silent:
                 self.sound_game_over.play()
-        elif won:
-            self.snake.insert(0, (row, col))
-            self.non_snake.remove((row, col))
-            if not self.is_silent:
-                self.sound_victory.play()
-        else:
-            self.snake.insert(0, (row, col))
-            self.non_snake.remove((row, col))
+        else: 
+            # Check if snake eats food.
+            if (row, col) == self.food: # If snake eats food, it won't pop the last cell. The food grid will be taken by snake later, no need to update board vacancy matrix.
+                food_obtained = True
+                self.score += 10 # Add 10 points to the score when food is eaten.
+                if not self.is_silent:
+                    self.sound_eat.play()  
+            else: 
+                self.non_snake.add(self.snake.pop()) # Pop the last cell of the snake and add it to the non-snake set.  
 
-            # Add new food after snake movement completes.
-            if food_obtained:
-                self.food = self._generate_food()
+            won = food_obtained and len(self.snake) == self.grid_size - 1
+
+            # Cant have both and won and lost
+            assert not (lost and won) 
+
+            if won:
+                self.snake.insert(0, (row, col))
+                self.non_snake.remove((row, col))
+                
+                if not self.is_silent:
+                    self.sound_victory.play()
+            else:
+                self.snake.insert(0, (row, col))
+                self.non_snake.remove((row, col))
+
+                # Add new food after snake movement completes.
+                if food_obtained:
+                    self.food = self._generate_food()
 
         info = {
             "snake_size": len(self.snake),
@@ -285,9 +288,7 @@ if __name__ == "__main__":
     action = -1
 
     while True:
-        
         for event in pygame.event.get():
-
             if game_state == "running":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:

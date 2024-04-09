@@ -76,7 +76,7 @@ class SnakeGame:
 
         # Check if snake collided with itself or the wall
         lost = (
-            (row, col) in self.snake
+            (row, col) in self.snake[:-1]
             or row < 0
             or row >= self.board_size
             or col < 0

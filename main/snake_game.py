@@ -122,7 +122,8 @@ class SnakeGame:
             "snake_head_pos": np.array(self.snake[0]),
             "prev_snake_head_pos": np.array(self.snake[1]),
             "food_pos": np.array(self.food),
-            "food_obtained": food_obtained
+            "food_obtained": food_obtained,
+            "won": False if lost else True if won else None
         }
 
         return lost or won, info

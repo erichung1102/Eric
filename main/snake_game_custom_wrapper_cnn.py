@@ -85,8 +85,8 @@ class SnakeEnvCNN(gymnasium.Env):
 
         return obs, reward * self.reward_scale, self.terminated, False, info
     
-    def render(self):
-        self.game.render()
+    def render(self, x_offset=0):
+        self.game.render(x_offset=x_offset)
 
     def close(self):
         self.game.close()

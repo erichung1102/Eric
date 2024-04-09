@@ -9,15 +9,15 @@ import pygame
 from pygame import mixer
 
 class SnakeGame:
-    def __init__(self, seed=0, board_size=12, is_render=False, is_silent=True):
+    def __init__(self, seed=0, board_size=12, is_render=False, is_silent=True, cell_size=40, border_size=20):
         if not is_render and not is_silent:
             raise ValueError("Not rendering but playing sound, bad input. Remove this check if you really want it and know what you're doing.")
         self.board_size = board_size
         self.grid_size = self.board_size ** 2
-        self.cell_size = 40
+        self.cell_size = cell_size
         self.width = self.height = self.board_size * self.cell_size
 
-        self.border_size = 20
+        self.border_size = border_size
         self.display_width = self.width + 2 * self.border_size
         self.display_height = self.height + 2 * self.border_size + 40
 
@@ -201,7 +201,8 @@ class SnakeGame:
     def render(self):
         if not self.is_render:
             raise Exception("render called on a SnakeGame where self.is_render == False")
-        self.screen.fill((0, 0, 0))
+
+        pygame.draw.rect(self.screen, (0, 0, 0), (0, 0, self.display_width, self.display_height))
 
         # Draw border
         pygame.draw.rect(self.screen, (255, 255, 255), (self.border_size - 2, self.border_size - 2, self.width + 4, self.height + 4), 2)

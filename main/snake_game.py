@@ -45,6 +45,8 @@ class SnakeGame:
         self.score = 0
         self.food = None
         self.seed = seed
+        self.steps = 0
+        self.info = {}
 
         np.random.seed(seed) # Set random seed.
         
@@ -59,6 +61,8 @@ class SnakeGame:
         self.direction = "DOWN" # Snake starts downward in each round
         self.food = self._generate_food()
         self.score = 0
+        self.steps = 0
+        self.info = {}
 
     def step(self, action):
         self._update_direction(action) # Update direction based on action.
@@ -117,16 +121,19 @@ class SnakeGame:
                 if food_obtained:
                     self.food = self._generate_food()
 
-        info = {
+        self.steps += 1
+
+        self.info = {
             "snake_size": len(self.snake),
             "snake_head_pos": np.array(self.snake[0]),
             "prev_snake_head_pos": np.array(self.snake[1]),
             "food_pos": np.array(self.food),
             "food_obtained": food_obtained,
-            "won": False if lost else True if won else None
+            "won": False if lost else True if won else None,
+            "steps": self.steps
         }
 
-        return lost or won, info
+        return lost or won, self.info
 
     # 0: UP, 1: LEFT, 2: RIGHT, 3: DOWN
     def _update_direction(self, action):
@@ -201,6 +208,14 @@ class SnakeGame:
             )
         )
         return text_rect.collidepoint(mouse_pos)
+    
+    def draw_info(self, x_offset=0):
+        if self.info['won'] == None:
+            return
+        assert self.info['won'] == True or self.info['won'] == False
+        score_text = game.font.render(f"Steps: {self.steps}  {'Won' if self.info['won'] else 'Died'}", True, (255, 255, 255))
+            
+        self.screen.blit(score_text, (game.border_size + x_offset + 140, game.height + 2 * game.border_size))
 
     def render(self, x_offset=0):
         if not self.is_render:
@@ -221,6 +236,8 @@ class SnakeGame:
 
         # Draw score
         self.draw_score(x_offset=x_offset)
+
+        self.draw_info(x_offset=x_offset)
 
         pygame.display.flip()
 

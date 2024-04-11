@@ -42,7 +42,7 @@ class SnakeGame:
         self.non_snake = None
 
         self.direction = None
-        self.score = 0
+        self.fruits = 0
         self.food = None
         self.seed = seed
         self.steps = 0
@@ -60,7 +60,7 @@ class SnakeGame:
         self.non_snake = set([(row, col) for row in range(self.board_size) for col in range(self.board_size) if (row, col) not in self.snake]) # Initialize the non-snake cells.
         self.direction = "DOWN" # Snake starts downward in each round
         self.food = self._generate_food()
-        self.score = 0
+        self.fruits = 0
         self.steps = 0
         self.info = {}
 
@@ -96,7 +96,7 @@ class SnakeGame:
             # Check if snake eats food.
             if (row, col) == self.food: # If snake eats food, it won't pop the last cell. The food grid will be taken by snake later, no need to update board vacancy matrix.
                 food_obtained = True
-                self.score += 10 # Add 10 points to the score when food is eaten.
+                self.fruits += 1
                 if not self.is_silent:
                     self.sound_eat.play()  
             else: 
@@ -158,9 +158,10 @@ class SnakeGame:
             food = (0, 0)
         return food
     
-    def draw_score(self, x_offset=0):
-        score_text = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
-        self.screen.blit(score_text, (self.border_size + x_offset, self.height + 2 * self.border_size))
+    def draw_info(self, x_offset=0):
+        raw_text = f"Fruits: {self.fruits}  {'' if not self.info or self.info['won'] == None else f'Steps: {self.steps} {"Won" if self.info["won"] else "Died"}'}"
+        score_text = self.font.render(raw_text, True, (255, 255, 255))
+        self.screen.blit(score_text, (self.border_size + x_offset, self.height + 2 * self.border_size))            
     
     def draw_welcome_screen(self, x_offset=0):
         title_text = self.font.render("SNAKE GAME", True, (255, 255, 255))
@@ -173,7 +174,7 @@ class SnakeGame:
 
     def draw_game_over_screen(self, x_offset=0):
         game_over_text = self.font.render("GAME OVER", True, (255, 255, 255))
-        final_score_text = self.font.render(f"SCORE: {self.score}", True, (255, 255, 255))
+        final_score_text = self.font.render(f"FRUITS: {self.fruits}", True, (255, 255, 255))
         retry_button_text = "RETRY"
 
         self.screen.fill((0, 0, 0))
@@ -208,14 +209,6 @@ class SnakeGame:
             )
         )
         return text_rect.collidepoint(mouse_pos)
-    
-    def draw_info(self, x_offset=0):
-        if self.info['won'] == None:
-            return
-        assert self.info['won'] == True or self.info['won'] == False
-        score_text = game.font.render(f"Steps: {self.steps}  {'Won' if self.info['won'] else 'Died'}", True, (255, 255, 255))
-            
-        self.screen.blit(score_text, (game.border_size + x_offset + 140, game.height + 2 * game.border_size))
 
     def render(self, x_offset=0):
         if not self.is_render:
@@ -234,9 +227,7 @@ class SnakeGame:
             r, c = self.food
             pygame.draw.rect(self.screen, (255, 0, 0), (c * self.cell_size + self.border_size + x_offset, r * self.cell_size + self.border_size, self.cell_size, self.cell_size))
 
-        # Draw score
-        self.draw_score(x_offset=x_offset)
-
+        # Draw info
         self.draw_info(x_offset=x_offset)
 
         pygame.display.flip()

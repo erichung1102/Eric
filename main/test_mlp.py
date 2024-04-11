@@ -27,9 +27,9 @@ env = SnakeEnvMLP(seed=seed, board_size=BOARD_SIZE, limit_step=False, is_render=
 model = MaskablePPO.load(MODEL_PATH)
 
 total_reward = 0
-total_score = 0
-min_score = 1e9
-max_score = 0
+total_fruits = 0
+min_fruits = 1e9
+max_fruits = 0
 wins = 0
 total_win_steps = 0
 
@@ -84,17 +84,17 @@ for episode in range(NUM_EPISODES):
             env.render()
             time.sleep(FRAME_DELAY)
 
-    episode_score = env.game.score
-    if episode_score < min_score:
-        min_score = episode_score
-    if episode_score > max_score:
-        max_score = episode_score
+    episode_fruits = env.game.fruits
+    if episode_fruits < min_fruits:
+        min_fruits = episode_fruits
+    if episode_fruits > max_fruits:
+        max_fruits = episode_fruits
     
     if PRINT:
         snake_size = info["snake_size"]
-        print(f"Episode {episode + 1}: Reward Sum: {episode_reward:.4f}, Score: {episode_score}, Total Steps: {num_steps}, Snake Size: {snake_size}")
+        print(f"Episode {episode + 1}: Reward Sum: {episode_reward:.4f}, Fruits: {episode_fruits}, Total Steps: {num_steps}, Snake Size: {snake_size}")
     total_reward += episode_reward
-    total_score += env.game.score
+    total_fruits += env.game.fruits
     if RENDER:
         time.sleep(ROUND_DELAY)
 
@@ -102,5 +102,5 @@ env.close()
 print(f"=================== Summary ==================")
 print("Model Path:", MODEL_PATH)
 print("Trials:", NUM_EPISODES)
-print(f"Average Score: {total_score / NUM_EPISODES}, Min Score: {min_score}, Max Score: {max_score}, Average reward: {total_reward / NUM_EPISODES}, Win Ratio: {wins / NUM_EPISODES}, Average moves to win: {'no wins' if wins == 0 else total_win_steps/wins}")
+print(f"Average Fruits: {total_fruits / NUM_EPISODES}, Min Fruits: {min_fruits}, Max Fruits: {max_fruits}, Average reward: {total_reward / NUM_EPISODES}, Win Ratio: {wins / NUM_EPISODES}, Average moves to win: {'no wins' if wins == 0 else total_win_steps/wins}")
 print("Running Time (s):", time.time() - start_time)

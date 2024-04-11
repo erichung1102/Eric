@@ -159,7 +159,7 @@ class SnakeGame:
         return food
     
     def draw_info(self, x_offset=0):
-        raw_text = f"Fruits: {self.fruits}" + '' if not self.info or self.info['won'] == None else f'  Steps: {self.steps}  {"Won" if self.info["won"] else "Died"}'
+        raw_text = f"Fruits: {self.fruits}" + '' if not self.info or self.info['won'] == None else f'  {"Won" if self.info["won"] else "Died"}  Steps: {self.steps}'
         score_text = self.font.render(raw_text, True, (255, 255, 255))
         self.screen.blit(score_text, (self.border_size + x_offset, self.height + 2 * self.border_size))            
     

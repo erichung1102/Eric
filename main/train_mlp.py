@@ -2,6 +2,7 @@ import os
 import sys
 import random
 
+import torch
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -10,7 +11,10 @@ from sb3_contrib.common.wrappers import ActionMasker
 
 from snake_game_custom_wrapper_mlp import SnakeEnv
 
-NUM_ENV = 32
+if torch.backends.mps.is_available():
+    NUM_ENV = 32 * 2
+else:
+    NUM_ENV = 32
 LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -46,26 +50,47 @@ def main():
     # Create the Snake environment.
     env = SubprocVecEnv([make_env(seed=s) for s in seed_set])
 
-    lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
-    clip_range_schedule = linear_schedule(0.15, 0.025)
+    if torch.backends.mps.is_available():
+        lr_schedule = linear_schedule(5e-4, 2.5e-6)
+        clip_range_schedule = linear_schedule(0.150, 0.025)
+        # Instantiate a PPO agent using MPS (Metal Performance Shaders).
+        model = MaskablePPO(
+            "MlpPolicy",
+            env,
+            device="mps",
+            verbose=1,
+            n_steps=2048,
+            batch_size=512*8,
+            n_epochs=4,
+            gamma=0.94,
+            learning_rate=lr_schedule,
+            clip_range=clip_range_schedule,
+            tensorboard_log=LOG_DIR
+        )
+    else:
+        lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
+        clip_range_schedule = linear_schedule(0.15, 0.025)
 
-    # # Instantiate a PPO agent
-    model = MaskablePPO(
-        "MlpPolicy",
-        env,
-        device="cuda",
-        verbose=1,
-        n_steps=2048,
-        batch_size=512,
-        n_epochs=4,
-        gamma=0.94,
-        learning_rate=lr_schedule,
-        clip_range=clip_range_schedule,
-        tensorboard_log=LOG_DIR
-    )
+        # # Instantiate a PPO agent
+        model = MaskablePPO(
+            "MlpPolicy",
+            env,
+            device="cuda",
+            verbose=1,
+            n_steps=2048,
+            batch_size=512,
+            n_epochs=4,
+            gamma=0.94,
+            learning_rate=lr_schedule,
+            clip_range=clip_range_schedule,
+            tensorboard_log=LOG_DIR
+        )
 
-    # Set the save directory
-    save_dir = "trained_models_mlp"
+        # Set the save directory
+        if torch.backends.mps.is_available():
+            save_dir = "trained_models_mlp_mps"
+        else:
+            save_dir = "trained_models_mlp"
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15625 # checkpoint_interval * num_envs = total_steps_per_checkpoint

@@ -276,13 +276,15 @@ class SnakeGame:
 
         # Draw the body (color gradient)
         color_list = np.linspace(255, 100, len(self.snake), dtype=np.uint8)
-        for i, pos in enumerate(self.snake[1:]):
+        for i, pos in enumerate(self.snake[1:-1]):
             body_x = pos[1] * self.cell_size + self.border_size + x_offset
             body_y = pos[0] * self.cell_size + self.border_size
             body_width = self.cell_size
             body_height = self.cell_size
             body_radius = 5
             pygame.draw.rect(self.screen, (0, color_list[i], 0),
+                            (body_x, body_y, body_width, body_height), border_radius=body_radius)
+        pygame.draw.rect(self.screen, (100, 100, 200),
                             (body_x, body_y, body_width, body_height), border_radius=body_radius)
         
 

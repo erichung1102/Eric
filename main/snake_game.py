@@ -159,7 +159,7 @@ class SnakeGame:
         return food
     
     def draw_info(self, x_offset=0):
-        raw_text = f"Fruits: {self.fruits}" + ("" if not self.info or self.info['won'] == None else f'  {"Won" if self.info["won"] else "Died"}  Steps: {self.steps}')
+        raw_text = f"Fruits: {self.fruits}" + ("" if not self.info or self.info['won'] == None else f'   Steps: {self.steps}   {"Won" if self.info["won"] else "Died"}')
         score_text = self.font.render(raw_text, True, (255, 255, 255))
         self.screen.blit(score_text, (self.border_size + x_offset, self.height + 2 * self.border_size))            
     
@@ -256,18 +256,22 @@ class SnakeGame:
 
         eye_size = 3/40 * self.cell_size
         eye_offset = self.cell_size // 4
-        last_move = self.info["snake_head_pos"] - self.info["prev_snake_head_pos"]
-        if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([-1, 0])):
-            #top left
-            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + eye_offset), eye_size)
-        if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([-1, 0])):
-            # top right
-            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + eye_offset), eye_size)
-        if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([1, 0])):
-            # bottom right
+        if self.info:
+            last_move = self.info["snake_head_pos"] - self.info["prev_snake_head_pos"]
+            if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([-1, 0])):
+                #top left
+                pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + eye_offset), eye_size)
+            if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([-1, 0])):
+                # top right
+                pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + eye_offset), eye_size)
+            if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([1, 0])):
+                # bottom right
+                pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + self.cell_size - eye_offset), eye_size)
+            if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([1, 0])):
+                # bottom left
+                pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + self.cell_size - eye_offset), eye_size)
+        else:
             pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + self.cell_size - eye_offset), eye_size)
-        if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([1, 0])):
-            # bottom left
             pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + self.cell_size - eye_offset), eye_size)
 
         # Draw the body (color gradient)

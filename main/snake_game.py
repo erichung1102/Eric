@@ -126,7 +126,7 @@ class SnakeGame:
         self.info = {
             "snake_size": len(self.snake),
             "snake_head_pos": np.array(self.snake[0]),
-            "prev_snake_head_pos": np.array(self.snake[1]),
+            "prev_snake_head_pos": "only one segment" if len(self.snake) < 2 else np.array(self.snake[1]), 
             "food_pos": np.array(self.food),
             "food_obtained": food_obtained,
             "won": False if lost else True if won else None,
@@ -256,8 +256,19 @@ class SnakeGame:
 
         eye_size = 3/40 * self.cell_size
         eye_offset = self.cell_size // 4
-        pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + eye_offset), eye_size)
-        pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + eye_offset), eye_size)
+        last_move = self.info["snake_head_pos"] - self.info["prev_snake_head_pos"]
+        if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([-1, 0])):
+            #top left
+            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + eye_offset), eye_size)
+        if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([-1, 0])):
+            # top right
+            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + eye_offset), eye_size)
+        if np.array_equal(last_move, np.array([0, 1])) or np.array_equal(last_move, np.array([1, 0])):
+            # bottom right
+            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + self.cell_size - eye_offset, head_y + self.cell_size - eye_offset), eye_size)
+        if np.array_equal(last_move, np.array([0, -1])) or np.array_equal(last_move, np.array([1, 0])):
+            # bottom left
+            pygame.draw.circle(self.screen, (255, 255, 255), (head_x + eye_offset, head_y + self.cell_size - eye_offset), eye_size)
 
         # Draw the body (color gradient)
         color_list = np.linspace(255, 100, len(self.snake), dtype=np.uint8)

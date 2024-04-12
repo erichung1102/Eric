@@ -5,6 +5,7 @@ import gym
 import numpy as np
 
 from snake_game import SnakeGame
+from circle_detection import is_circle
 
 class SnakeEnv(gym.Env):
     def __init__(self, seed=0, board_size=12, silent_mode=True, limit_step=True):
@@ -46,6 +47,9 @@ class SnakeEnv(gym.Env):
         self.done, info = self.game.step(action) # info = {"snake_size": int, "snake_head_pos": np.array, "prev_snake_head_pos": np.array, "food_pos": np.array, "food_obtained": bool}
         obs = self._generate_observation()
 
+        compressed_obs = np.zeros((self.game.board_size, self.game.board_size), dtype=np.uint8)
+        compressed_obs[tuple(np.transpose(self.game.snake))] = 1
+
         reward = 0.0
         self.reward_step_counter += 1
 
@@ -68,10 +72,13 @@ class SnakeEnv(gym.Env):
             self.reward_step_counter = 0 # Reset reward step counter
         
         else:
+            # Give a penalty to the agent if its body surrounds spaces of the board
+            reward_circle = - (is_circle(compressed_obs) * 0.1) / info["snake_size"] # '* 0.1' stands for not competing with each reward/penalty after each step
+
             if np.linalg.norm(info["snake_head_pos"] - info["food_pos"]) < np.linalg.norm(info["prev_snake_head_pos"] - info["food_pos"]):
-                reward = 1 / info["snake_size"] # No upper limit might enable the agent to master shorter scenario faster and more firmly.
+                reward = (1 / info["snake_size"]) + reward_circle # No upper limit might enable the agent to master shorter scenario faster and more firmly.
             else:
-                reward = - 1 / info["snake_size"]
+                reward = (- 1 / info["snake_size"]) + reward_circle
             # print(reward*0.1)
             # time.sleep(1)
 

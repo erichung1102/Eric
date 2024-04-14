@@ -9,17 +9,17 @@ import sys
 import time
 
 if __name__ == "__main__":
-    board_size = 7
+    board_size = 6
     is_silent = False
 
     seed = random.randint(0, 1e9)
     print("Seed:", seed)
 
-    env = SnakeEnvCNN(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, enlarge_multiplier=84/board_size, border_size=100)
+    env = SnakeEnvCNN(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, enlarge_multiplier=84/board_size, cell_size=60, border_size=50)
     obs, info = env.reset()
     env_steps = 0
 
-    game = SnakeGame(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, border_size=100)
+    game = SnakeGame(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, cell_size=60, border_size=50)
     game.done = False
     game_steps = 0
 

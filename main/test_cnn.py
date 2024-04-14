@@ -13,9 +13,9 @@ FRAME_DELAY = 0.05 # 0.02 fast, 0.05 slow
 ROUND_DELAY = 1.5
 PRINT = False
 
-BOARD_SIZE = 7
+BOARD_SIZE = 6
 
-MODEL_PATH = f"trained_models_cnn_mps/{BOARD_SIZE}x{BOARD_SIZE}_harsher_punishment2/ppo_final"
+MODEL_PATH = f"trained_models_cnn/{BOARD_SIZE}x{BOARD_SIZE}/ppo_final"
 
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")

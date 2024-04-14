@@ -22,9 +22,7 @@ MPS_AVALIABLE = torch.backends.mps.is_available()
 SAVE_NAME = f"{BOARD_SIZE}x{BOARD_SIZE}_2"
 
 # Set the save directory
-SAVE_DIR = (("trained_models_cnn_mps" if MPS_AVALIABLE else "trained_models_cnn") 
-            + "/" 
-            + SAVE_NAME)
+SAVE_DIR = "trained_models_cnn/" + SAVE_NAME
 
 
 # Linear scheduler

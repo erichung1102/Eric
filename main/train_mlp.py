@@ -15,8 +15,10 @@ BOARD_SIZE = 4
 NUM_ENV = 32
 LOG_DIR = "logs"
 
+SAVE_NAME = f"{BOARD_SIZE}x{BOARD_SIZE}_2"
+
 # Set the save directory
-SAVE_DIR = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}_test"
+SAVE_DIR = f"trained_models_mlp/" + SAVE_NAME
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
@@ -39,7 +41,7 @@ def make_env(board_size, seed=0):
         return env
     return _init
 
-def main(board_size, log_dir, save_dir, num_env):
+def main(board_size, log_dir, save_dir, save_name, num_env):
     os.makedirs(log_dir, exist_ok=True)
 
     # Generate a list of random seeds for each environment.
@@ -82,7 +84,7 @@ def main(board_size, log_dir, save_dir, num_env):
         model.learn(
             total_timesteps=int(100000000),
             callback=[checkpoint_callback],
-            tb_log_name=f"ppo_mlp_{board_size}x{board_size}"
+            tb_log_name=f"ppo_mlp" + save_name
         )
         env.close()
 
@@ -93,4 +95,4 @@ def main(board_size, log_dir, save_dir, num_env):
     model.save(os.path.join(save_dir, "ppo_final.zip"))
 
 if __name__ == "__main__":
-    main(BOARD_SIZE, SAVE_DIR)
+    main(BOARD_SIZE, SAVE_DIR, SAVE_NAME, NUM_ENV)

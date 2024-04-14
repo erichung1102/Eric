@@ -276,7 +276,7 @@ class SnakeGame:
 
         # Draw the body (color gradient)
         color_list = np.linspace(255, 100, len(self.snake), dtype=np.uint8)
-        for i, pos in enumerate(self.snake[1:-1]):
+        for i, pos in enumerate(self.snake[1:]):
             body_x = pos[1] * self.cell_size + self.border_size + x_offset
             body_y = pos[0] * self.cell_size + self.border_size
             body_width = self.cell_size

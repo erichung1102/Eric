@@ -1,2 +1,0 @@
-Trials: 5000
-Average Score: 129.446, Min Score: 30, Max Score: 130, Average reward: 2.271946794682766, Win Ratio: 0.9894, Avg Moves to Win: 36.33676975945017

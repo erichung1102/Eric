@@ -7,11 +7,11 @@ from snake_game_custom_wrapper_cnn import SnakeEnvCNN
 
 NUM_EPISODES = 5000
 
-RENDER = False
-IS_SILENT = True
+RENDER = True
+IS_SILENT = False
 FRAME_DELAY = 0.05 # 0.02 fast, 0.05 slow
 ROUND_DELAY = 1.5
-PRINT = False
+PRINT = True
 
 BOARD_SIZE = 6
 
@@ -20,7 +20,7 @@ MODEL_PATH = f"trained_models_cnn/{BOARD_SIZE}x{BOARD_SIZE}/ppo_final"
 seed = random.randint(0, 1e9)
 print(f"Using seed = {seed} for testing.")
 
-env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, enlarge_multiplier=84 / BOARD_SIZE, limit_step=True, is_render=RENDER, is_silent=IS_SILENT, cell_size=70)
+env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, enlarge_multiplier=84 / BOARD_SIZE, limit_step=True, is_render=RENDER, is_silent=IS_SILENT, cell_size=70*6/BOARD_SIZE, border_size=20)
 
 # Load the trained model
 model = MaskablePPO.load(MODEL_PATH)
@@ -35,7 +35,7 @@ total_win_steps = 0
 start_time = time.time()
 
 for episode in range(NUM_EPISODES):
-    print(f"{episode}/{NUM_EPISODES}", end="\r")
+    # print(f"{episode}/{NUM_EPISODES}", end="\r")
     obs, info = env.reset()
     episode_reward = 0
     terminated = False

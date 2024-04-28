@@ -48,14 +48,15 @@ class SnakeGame:
         self.steps = 0
         self.info = {}
 
-        np.random.seed(seed) # Set random seed.
+        random.seed(seed) # Set random seed.
+        
         
         self.reset()
 
     def reset(self, seed=None):
         if seed:
             self.seed = seed
-            np.random.seed(seed)
+            random.seed(seed)
         self.snake = [(self.board_size // 2 + i, self.board_size // 2) for i in range(1, -2, -1)] # Initialize the snake with three cells in (row, column) format.
         self.non_snake = set([(row, col) for row in range(self.board_size) for col in range(self.board_size) if (row, col) not in self.snake]) # Initialize the non-snake cells.
         self.direction = "DOWN" # Snake starts downward in each round
@@ -153,6 +154,7 @@ class SnakeGame:
 
     def _generate_food(self):
         if len(self.non_snake) > 0:
+            random.seed(self.seed)
             food = random.sample(sorted(self.non_snake), 1)[0]
         else: # If the snake occupies the entire board, no need to generate new food and just default to (0, 0).
             food = (0, 0)

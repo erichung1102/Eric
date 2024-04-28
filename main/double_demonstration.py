@@ -15,11 +15,11 @@ if __name__ == "__main__":
     seed = random.randint(0, 1e9)
     print("Seed:", seed)
 
-    env = SnakeEnvCNN(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, enlarge_multiplier=84/board_size, cell_size=60, border_size=50)
+    env = SnakeEnvCNN(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, enlarge_multiplier=84/board_size, cell_size=70*6/board_size, border_size=20)
     obs, info = env.reset()
     env_steps = 0
 
-    game = SnakeGame(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, cell_size=60, border_size=50)
+    game = SnakeGame(seed=seed, board_size=board_size, is_render=True, is_silent=is_silent, cell_size=70*6/board_size, border_size=20)
     game.done = False
     game_steps = 0
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     game.render(x_offset=x_offset)
     env.render()
 
-    MODEL_PATH = f"trained_models_cnn_mps/{board_size}x{board_size}_harsher_punishment/ppo_final"
+    MODEL_PATH = f"trained_models_cnn/{board_size}x{board_size}/ppo_final"
     model = MaskablePPO.load(MODEL_PATH)
 
     should_update = False

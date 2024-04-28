@@ -71,7 +71,7 @@ def main():
         time.sleep(FRAME_DELAY)
 
         if done:
-            print(f"Game Finished: Score = {env.game.score}, Total steps = {num_step}")
+            print(f"Game Finished: Score = {env.game.fruits}, Total steps = {num_step}")
             time.sleep(ROUND_DELAY)
 
     env.close()

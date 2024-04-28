@@ -45,7 +45,7 @@ def main():
     seed = random.randint(0, 1e9)
     print(f"Using seed = {seed} for testing.")
 
-    env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, is_render=True, is_silent=False)
+    env = SnakeEnvCNN(seed=seed, board_size=BOARD_SIZE, is_render=True, is_silent=False, cell_size=80, border_size=40)
 
     cycle = generate_hamiltonian_cycle(env.game.board_size)
     cycle_len = len(cycle)

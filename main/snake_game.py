@@ -9,7 +9,7 @@ import pygame
 from pygame import mixer
 
 class SnakeGame:
-    def __init__(self, seed=0, board_size=12, is_render=False, is_silent=True, cell_size=40, border_size=20):
+    def __init__(self, seed=None, board_size=12, is_render=False, is_silent=True, cell_size=40, border_size=20):
         if not is_render and not is_silent:
             raise ValueError("Not rendering but playing sound, bad input. Remove this check if you really want it and know what you're doing.")
         self.board_size = board_size
@@ -44,12 +44,11 @@ class SnakeGame:
         self.direction = None
         self.fruits = 0
         self.food = None
-        self.seed = seed
+        if seed:
+            self.seed = seed
+            random.seed(seed) # Set random seed.
         self.steps = 0
         self.info = {}
-
-        random.seed(seed) # Set random seed.
-        
         
         self.reset()
 
@@ -154,7 +153,8 @@ class SnakeGame:
 
     def _generate_food(self):
         if len(self.non_snake) > 0:
-            random.seed(self.seed)
+            if hasattr(self, "seed"):
+                random.seed(self.seed)
             food = random.sample(sorted(self.non_snake), 1)[0]
         else: # If the snake occupies the entire board, no need to generate new food and just default to (0, 0).
             food = (0, 0)

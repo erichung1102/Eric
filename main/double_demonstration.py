@@ -70,3 +70,14 @@ if __name__ == "__main__":
             env.render()
             
             should_update = False
+        if game.done:
+            time.sleep(1.5)
+            new_seed = random.randint(0, 1e9)
+            print("Seed:", new_seed)
+            game.seed = env.game.seed = new_seed
+            game.reset()
+            game.done = False
+            env.reset()
+
+            game.render(x_offset=x_offset)
+            env.render()

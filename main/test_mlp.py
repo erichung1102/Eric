@@ -17,11 +17,7 @@ BOARD_SIZE = 8
 
 MODEL_PATH = f"trained_models_mlp/{BOARD_SIZE}x{BOARD_SIZE}/ppo_final"
 
-seed = random.randint(0, 1e9)
-print(f"Using seed = {seed} for testing.")
-
-
-env = SnakeEnvMLP(seed=seed, board_size=BOARD_SIZE, limit_step=False, is_render=RENDER, is_silent=IS_SILENT)
+env = SnakeEnvMLP(board_size=BOARD_SIZE, limit_step=False, is_render=RENDER, is_silent=IS_SILENT)
 
 # Load the trained model
 model = MaskablePPO.load(MODEL_PATH)
@@ -37,7 +33,7 @@ start_time = time.time()
 
 for episode in range(NUM_EPISODES):
     print(f"{episode}/{NUM_EPISODES}", end="\r")
-    obs, info = env.reset()
+    obs, info = env.reset(seed=random.randint(0, 1e9))
     episode_reward = 0
     terminated = False
     
